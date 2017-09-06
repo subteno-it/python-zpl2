@@ -35,6 +35,20 @@ ARG_IN_BLOCK = 'in_block'
 ARG_COLOR = 'color'
 ARG_ROUNDING = 'rounding'
 ARG_DIAMETER = 'diameter'
+ARG_MODEL = 'model'
+ARG_MAGNIFICATION_FACTOR = 'magnification_factor'
+ARG_ERROR_CORRECTION = 'error_correction'
+ARG_MASK_VALUE = 'mask_value'
+
+# Model values
+MODEL_ORIGINAL = 1
+MODEL_ENHANCED = 2
+
+# Error Correction
+ERROR_CORRECTION_ULTRA_HIGH = 'H'
+ERROR_CORRECTION_HIGH = 'Q'
+ERROR_CORRECTION_STANDARD = 'M'
+ERROR_CORRECTION_HIGH_DENSITY = 'L'
 
 # Boolean values
 BOOL_YES = 'Y'
@@ -76,6 +90,7 @@ BARCODE_EAN_8 = 'ean-8'
 BARCODE_UPC_E = 'upc-e'
 BARCODE_CODE_128 = 'code_128'
 BARCODE_EAN_13 = 'ean-13'
+BARCODE_QR_CODE = 'qr_code'
 
 
 class Zpl2(object):
@@ -292,6 +307,16 @@ class Zpl2(object):
             ]
             return 'E' + self._generate_arguments(arguments, kwargs)
 
+        def _qrcode(**kwargs):
+            arguments = [
+                ARG_ORIENTATION,
+                ARG_MODEL,
+                ARG_MAGNIFICATION_FACTOR,
+                ARG_ERROR_CORRECTION,
+                ARG_MASK_VALUE,
+            ]
+            return 'Q' + self._generate_arguments(arguments, kwargs)
+
         barcodeTypes = {
             BARCODE_CODE_11: _code11,
             BARCODE_INTERLEAVED_2_OF_5: _interleaved2of5,
@@ -302,6 +327,7 @@ class Zpl2(object):
             BARCODE_UPC_E: _upce,
             BARCODE_CODE_128: _code128,
             BARCODE_EAN_13: _ean13,
+            BARCODE_QR_CODE: _qrcode,
         }
         return '^B' + barcodeTypes[barcodeType](**barcode_format)
 
