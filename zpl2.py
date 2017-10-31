@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2016 SYLEAM (<http://www.syleam.fr>)
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+
+import binascii
+import math
+from PIL import ImageOps
+
 try:
     strcast = unicode
 except:
@@ -452,6 +457,44 @@ class Zpl2(object):
         command = '{origin}{data}{stop}'.format(
             origin=self._field_origin(right, down),
             data='^GC' + self._generate_arguments(arguments, graphic_format),
+            stop=self._field_data_stop(),
+        )
+        self._write_command(command)
+
+    def graphic_field(self, right, down, pil_image):
+        """ Encode a PIL image into an ASCII string suitable for ZPL printers
+        """
+        width, height = pil_image.size
+        rounded_width = int(math.ceil(width / 8.) * 8)
+
+        # Transform the image :
+        #   - Invert the colors (PIL uses 0 for black, ZPL uses 0 for white)
+        #   - Convert to monochrome in case it is not already
+        #   - Round the width to a multiple of 8 because ZPL needs an integer
+        #     count of bytes per line (each pixel is a bit)
+        pil_image = ImageOps.invert(pil_image).convert('1').crop(
+            (0, 0, rounded_width, height))
+
+        # Convert the image to a two-character hexadecimal values string
+        ascii_data = binascii.hexlify(pil_image.tobytes()).upper()
+
+        # Each byte is composed of two characters
+        bytes_per_row = rounded_width / 8
+        total_bytes = bytes_per_row * height
+
+        graphic_image_command = (
+            '^GFA,{total_bytes},{total_bytes},{bytes_per_row},{ascii_data}'
+            .format(
+                total_bytes=total_bytes,
+                bytes_per_row=bytes_per_row,
+                ascii_data=ascii_data,
+            )
+        )
+
+        # Generate the ZPL II command
+        command = '{origin}{data}{stop}'.format(
+            origin=self._field_origin(right, down),
+            data=graphic_image_command,
             stop=self._field_data_stop(),
         )
         self._write_command(command)
