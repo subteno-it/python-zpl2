@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2016 SYLEAM (<http://www.syleam.fr>)
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+try:
+    strcast = unicode
+except:
+    strcast = str
 
 # Constants for the printer configuration management
 CONF_RELOAD_FACTORY = 'F'
@@ -115,7 +119,7 @@ class Zpl2(object):
 
     def _write_command(self, data):
         """ Adds a complete command to buffer """
-        self._buffer.append(unicode(data).encode(self.encoding))
+        self._buffer.append(strcast(data).encode(self.encoding))
 
     def _generate_arguments(self, arguments, kwargs):
         """ Generate a zebra arguments from an argument names list and a dict of
