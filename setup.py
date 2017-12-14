@@ -6,7 +6,7 @@ from distutils.core import setup
 
 setup(
     name='zpl2',
-    version='1.0',
+    version='1.1',
     author='Sylvain Garancher',
     author_email='sylvain.garancher@syleam.fr',
     py_modules=['zpl2'],
