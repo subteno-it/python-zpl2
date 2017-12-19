@@ -10,6 +10,9 @@ setup(
     author='Sylvain Garancher',
     author_email='sylvain.garancher@syleam.fr',
     py_modules=['zpl2'],
+    extras_require={
+        'graphics': ['pillow'],
+    },
     license='LICENSE.txt',
     description='Python library that generates ZPL II labels',
     long_description=open('README.txt').read(),

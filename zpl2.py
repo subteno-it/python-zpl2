@@ -4,7 +4,10 @@
 
 import binascii
 import math
-from PIL import ImageOps
+try:
+    from PIL import ImageOps
+except:
+    ImageOps = None
 
 try:
     strcast = unicode
@@ -464,6 +467,12 @@ class Zpl2(object):
     def graphic_field(self, right, down, pil_image):
         """ Encode a PIL image into an ASCII string suitable for ZPL printers
         """
+        if ImageOps is None:
+            # Importing ImageOps from PIL didn't work
+            raise Exception(
+                'You must install Pillow to be able to use the graphic'
+                ' fields feature')
+
         width, height = pil_image.size
         rounded_width = int(math.ceil(width / 8.) * 8)
 
