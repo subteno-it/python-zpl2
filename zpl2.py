@@ -47,6 +47,7 @@ ARG_IN_BLOCK = 'in_block'
 ARG_COLOR = 'color'
 ARG_ROUNDING = 'rounding'
 ARG_DIAMETER = 'diameter'
+ARG_DIAGONAL_ORIENTATION = 'diagonal_orientation'
 ARG_MODEL = 'model'
 ARG_MAGNIFICATION_FACTOR = 'magnification_factor'
 ARG_ERROR_CORRECTION = 'error_correction'
@@ -71,6 +72,10 @@ ORIENTATION_NORMAL = 'N'
 ORIENTATION_ROTATED = 'R'
 ORIENTATION_INVERTED = 'I'
 ORIENTATION_BOTTOM_UP = 'B'
+
+# Diagonal lines orientation values
+DIAGONAL_ORIENTATION_LEFT = 'L'
+DIAGONAL_ORIENTATION_RIGHT = 'R'
 
 # Justify values
 JUSTIFY_LEFT = 'L'
@@ -438,6 +443,43 @@ class Zpl2(object):
         command = '{origin}{data}{stop}'.format(
             origin=self._field_origin(right, down),
             data='^GB' + self._generate_arguments(arguments, graphic_format),
+            stop=self._field_data_stop(),
+        )
+        self._write_command(command)
+
+    def graphic_diagonal_line(self, right, down, graphic_format):
+        """ Send the commands to draw a rectangle """
+        arguments = [
+            ARG_WIDTH,
+            ARG_HEIGHT,
+            ARG_THICKNESS,
+            ARG_COLOR,
+            ARG_DIAGONAL_ORIENTATION,
+        ]
+
+        # Check that the thickness value fits in the allowed values
+        if graphic_format.get(ARG_THICKNESS) is not None:
+            graphic_format[ARG_THICKNESS] = self._enforce(
+                graphic_format[ARG_THICKNESS])
+
+        # Check that the width value fits in the allowed values
+        if graphic_format.get(ARG_WIDTH) is not None:
+            graphic_format[ARG_WIDTH] = self._enforce(
+                graphic_format[ARG_WIDTH], minimum=3)
+
+        # Check that the height value fits in the allowed values
+        if graphic_format.get(ARG_HEIGHT) is not None:
+            graphic_format[ARG_HEIGHT] = self._enforce(
+                graphic_format[ARG_HEIGHT], minimum=3)
+
+        # Check the given orientation
+        graphic_format[ARG_DIAGONAL_ORIENTATION] = graphic_format.get(
+            ARG_DIAGONAL_ORIENTATION, DIAGONAL_ORIENTATION_LEFT)
+
+        # Generate the ZPL II command
+        command = '{origin}{data}{stop}'.format(
+            origin=self._field_origin(right, down),
+            data='^GD' + self._generate_arguments(arguments, graphic_format),
             stop=self._field_data_stop(),
         )
         self._write_command(command)
