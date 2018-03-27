@@ -1,3 +1,7 @@
+v1.2, 2018-03-27
+
+* Added diagonal lines management
+
 v1.1, 2017-12-19
 
 * Added support for QR Code barcodes
