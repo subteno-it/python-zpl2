@@ -371,7 +371,7 @@ class Zpl2(object):
 
     def _field_data(self, data):
         """ Add data to the buffer, between start and stop commands """
-        command = '{start}{data}{stop}'.format(
+        command = u'{start}{data}{stop}'.format(
             start=self._field_data_start(),
             data=data,
             stop=self._field_data_stop(),
@@ -387,7 +387,7 @@ class Zpl2(object):
         if field_format.get(ARG_IN_BLOCK, False):
             block = self._field_block(field_format)
 
-        command = '{origin}{font_format}{reverse}{block}{data}'.format(
+        command = u'{origin}{font_format}{reverse}{block}{data}'.format(
             origin=self._field_origin(right, down),
             font_format=self._font_format(field_format),
             reverse=reverse,
